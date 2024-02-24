@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 //IMPORT FROM OTHER FILES
 const authRouter = require("./routes/auth");
 const e = require("express");
+const adminRouter = require("./routes/admin");
 // INIT
 const PORT = 3000;
 const DB = "mongodb+srv://Hemanth:Hemanth123@cluster0.amgqe1v.mongodb.net/?retryWrites=true&w=majority"
@@ -12,6 +13,7 @@ const app = express();
 //MIDDLEWARE
 app.use(express.json())
 app.use(authRouter);
+app.use(adminRouter);
 
 //connections
 mongoose.connect(DB).then(
@@ -23,6 +25,6 @@ mongoose.connect(DB).then(
 // Create,Read, Update,Delete
 
 
-app.listen(PORT,"0.0.0.0",()=>{
+app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
 })

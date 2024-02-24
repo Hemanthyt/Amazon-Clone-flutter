@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-    String uri = 'http://localhost:3000';
+  // String uri = 'http://localhost:3000';
 
   //Signup user
   void signUpUser({
@@ -69,28 +69,22 @@ class AuthService {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).then((value) {
-        debugPrint("${value.toString()}");
-
-      }).catchError((err){
-        debugPrint("err:${err.toString()}");
-
-      });
+      );
       debugPrint(res.toString());
-      // httpErrorHandle(
-      //   response: res,
-      //   context: context,
-      //   onSuccess: () async {
-      //     SharedPreferences prefs = await SharedPreferences.getInstance();
-      //     Provider.of<UserProvider>(context, listen: false).setUser(res.body);
-      //     await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
-      //     Navigator.pushNamedAndRemoveUntil(
-      //       context,
-      //       BottomBar.routeName,
-      //       (route) => false,
-      //     );
-      //   },
-      // );
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () async {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          Provider.of<UserProvider>(context, listen: false).setUser(res.body);
+          await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            BottomBar.routeName,
+            (route) => false,
+          );
+        },
+      );
     } catch (e) {
       showSnackBar(context, e.toString());
     }
@@ -115,9 +109,7 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': token!
         },
-      ).then((value) {
-        debugPrint("value ${value.toString()}");
-      });
+      );
       debugPrint(">> $tokenRes");
 
       var response = jsonDecode(tokenRes.body);
