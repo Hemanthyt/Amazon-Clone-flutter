@@ -1,38 +1,25 @@
 import 'package:amazon_clone/Constants/global_variables.dart';
-import 'package:amazon_clone/common/widgets/custom_button.dart';
-import 'package:amazon_clone/features/address/screens/address_screens.dart';
-import 'package:amazon_clone/features/cart/widgets/cart_product.dart';
-import 'package:amazon_clone/features/cart/widgets/cart_subtotal.dart';
-import 'package:amazon_clone/features/home/widgets/address_box.dart';
 import 'package:amazon_clone/features/search/screens/search_screen.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:amazon_clone/models/order.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+class OrderDetailsScreen extends StatefulWidget {
+  static const String routeName = '/order-details';
+  final Order order;
+  const OrderDetailsScreen({super.key, required this.order});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   void navigateToSearchScreen(String query) {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
 
-  void navigateToAddress(int sum) {
-    Navigator.pushNamed(context, AddressScreen.routeName,
-        arguments: sum.toString());
-  }
-
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserProvider>().user;
-    int sum = 0;
-    user.cart
-        .map((e) => sum += e['quantity'] * e['product']['price'] as int)
-        .toList();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -107,35 +94,29 @@ class _CartScreenState extends State<CartScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const AddressBox(),
-            const CartSubTotal(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                text: 'Proceed to Buy (${user.cart.length} items)',
-                onTap: () => navigateToAddress(sum),
-                color: Colors.yellow[600],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'View Order Details',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Container(
-              height: 1,
-              color: Colors.black12.withOpacity(0.08),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            ListView.builder(
-                itemCount: user.cart.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return CartProduct(index: index);
-                })
-          ],
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                child: Column(
+                  children: [
+                    Text(
+                        'Order Date : ${DateFormat().format(DateTime.fromMicrosecondsSinceEpoch(widget.order.orderedAt))}')
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
